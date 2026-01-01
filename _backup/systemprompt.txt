@@ -1,0 +1,555 @@
+**ROLE:**
+You are a Senior Full-Stack Web Architect specializing in the "T3 Stack" equivalent for Google: Next.js (React), Tailwind CSS, and Firebase (Auth, Firestore, Functions, Hosting). You have deep expertise in secure payment integration using Stripe APIs.
+
+**PROJECT CONTEXT:**
+We are rebuilding "NextGen DON Academy" (nextgendonacademy.com), a professional training platform for Directors of Nursing.
+- **Goal:** Convert a brochure site into a transactional course platform.
+- **Core Feature:** Users must be able to view the curriculum, sign up, and pay for the $499 course immediately to gain access.
+
+**TECHNICAL STACK & CONSTRAINTS:**
+1.  **Frontend:** Next.js 14+ (App Router), TypeScript, Tailwind CSS, Lucide React (icons).
+2.  **Backend/Infra:** Google Firebase.
+    -   *Auth:* Google Provider & Email/Password.
+    -   *Database:* Firestore (Users collection, Enrollments collection).
+    -   *Logic:* Firebase Cloud Functions (v2) for all payment handling.
+3.  **Payments:** Stripe Checkout (Session-based flow).
+
+**CODING GUIDELINES:**
+1.  **Security First:** NEVER output code that places Stripe Secret Keys (`sk_live_...`) on the client-side. Always route payments through Cloud Functions.
+2.  **Modularity:** When asked for code, break it down into small, reusable components (e.g., `PricingCard.tsx`, `HeroSection.tsx`).
+3.  **Step-by-Step:** Do not generate the whole application at once. Wait for the user to specify the "Phase" we are working on.
+
+**CURRENT OBJECTIVE:**
+Await the user's instruction to begin Phase 1 (Project Setup & Frontend Scaffolding).
+
+
+Model
+ThinkingThoughts
+Expand to view model thoughts
+
+chevron_right
+This is Phase 1: Project Setup and Core Landing Components.
+We will initialize the project using the latest Next.js standards (App Router) and then build the two requested components with a professional, healthcare-focused aesthetic.
+Step 1: Terminal Commands
+Run these commands in your terminal to create the project and start the development server.
+code
+Bash
+# Initialize the Next.js app
+npx create-next-app@latest don-certification --typescript --tailwind --eslint
+
+# Navigate into the project directory
+cd don-certification
+
+# Create a folder for our components
+mkdir -p src/components
+
+# Start the development server
+npm run dev
+When prompted by the CLI, choose Yes for the App Router and src/ directory.
+Step 2: HeroSection Component
+This component focuses on high impact and a clear Call to Action (CTA).
+Create src/components/HeroSection.tsx:
+code
+Tsx
+import React from 'react';
+
+const HeroSection = () => {
+  return (
+    <section className="relative bg-blue-900 text-white py-20 px-6">
+      <div className="max-w-6xl mx-auto flex flex-col items-center text-center">
+        <span className="uppercase tracking-widest text-blue-300 font-semibold mb-4">
+          Professional Healthcare Certification
+        </span>
+        <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
+          4-Week Director of Nursing <br />
+          <span className="text-blue-400">Leadership Certification</span>
+        </h1>
+        <p className="text-lg md:text-xl text-blue-100 max-w-2xl mb-10">
+          Elevate your clinical expertise into executive leadership. Master regulatory 
+          compliance, financial management, and team excellence in just one month.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-lg transition duration-300">
+            Download Syllabus
+          </button>
+          <button className="bg-white hover:bg-gray-100 text-blue-900 font-bold py-4 px-8 rounded-lg transition duration-300">
+            Enroll Today
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default HeroSection;
+Step 3: CourseCurriculum Component
+This component breaks down the 4-week roadmap into digestible cards.
+Create src/components/CourseCurriculum.tsx:
+code
+Tsx
+import React from 'react';
+
+const curriculum = [
+  {
+    week: "Week 1",
+    title: "Foundations of Clinical Governance",
+    topics: ["State & Federal Regulations", "QA/QAPI Programs", "Survey Preparedness"]
+  },
+  {
+    week: "Week 2",
+    title: "Financial Stewardship",
+    topics: ["Budget Management", "Staffing Ratios & PPD", "Resource Allocation"]
+  },
+  {
+    week: "Week 3",
+    title: "HR & Talent Management",
+    topics: ["Conflict Resolution", "Nursing Retention Strategies", "Ethics in Leadership"]
+  },
+  {
+    week: "Week 4",
+    title: "Strategic Operations",
+    topics: ["Risk Management", "Interdisciplinary Team Lead", "Final Certification Exam"]
+  }
+];
+
+const CourseCurriculum = () => {
+  return (
+    <section className="py-20 bg-gray-50 px-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">The 4-Week Roadmap</h2>
+          <p className="text-gray-600">A comprehensive curriculum designed for busy nursing professionals.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {curriculum.map((item, index) => (
+            <div key={index} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <div className="text-blue-600 font-bold mb-2">{item.week}</div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4 leading-snug">
+                {item.title}
+              </h3>
+              <ul className="space-y-2">
+                {item.topics.map((topic, i) => (
+                  <li key={i} className="text-gray-600 text-sm flex items-start">
+                    <span className="text-blue-500 mr-2">•</span>
+                    {topic}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default CourseCurriculum;
+Step 4: Assemble the Page
+Replace the contents of src/app/page.tsx with this code to view your progress:
+code
+Tsx
+import HeroSection from '@/components/HeroSection';
+import CourseCurriculum from '@/components/CourseCurriculum';
+
+export default function Home() {
+  return (
+    <main className="min-h-screen">
+      <HeroSection />
+      <CourseCurriculum />
+      {/* Additional sections like Testimonials or FAQ can go here */}
+    </main>
+  );
+}
+Next Steps
+Run the app: npm run dev and visit http://localhost:3000.
+Phase 2 Suggestion: Would you like to add a Lead Capture Form or a Pricing Table next?
+Model
+ThinkingThoughts
+Expand to view model thoughts
+
+chevron_right
+To implement Phase 2, we first need to install the Firebase SDK and then set up the authentication logic.
+Step 1: Install Firebase
+Run this command in your terminal:
+code
+Bash
+npm install firebase
+Step 2: Initialize Firebase
+Create a file at src/lib/firebase.ts to hold your configuration. (Replace the placeholders with the keys from your Firebase Console).
+code
+TypeScript
+// src/lib/firebase.ts
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase for SSR (Next.js)
+const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+export { auth };
+Step 3: Create the AuthContext
+This context will track the user's state and provide the login/register/logout functions to the entire app.
+Create src/context/AuthContext.tsx:
+code
+Tsx
+"use client";
+
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { 
+  onAuthStateChanged, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut, 
+  User,
+  getAuth
+} from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+
+interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+  login: (email: string, pass: string) => Promise<void>;
+  register: (email: string, pass: string) => Promise<void>;
+  logout: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Listen for authentication state changes
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const login = async (email: string, pass: string) => {
+    await signInWithEmailAndPassword(auth, email, pass);
+  };
+
+  const register = async (email: string, pass: string) => {
+    await createUserWithEmailAndPassword(auth, email, pass);
+  };
+
+  const logout = async () => {
+    await signOut(auth);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+};
+
+// Custom hook for easy access
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+Step 4: Wrap the Layout
+In Next.js App Router, the layout.tsx is a Server Component. Since the AuthProvider uses React Context (which is client-side), you wrap the children inside the root layout.
+Update src/app/layout.tsx:
+code
+Tsx
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { AuthProvider } from "@/context/AuthContext";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "DON Leadership Certification",
+  description: "4-Week Director of Nursing Leadership Certification",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>
+        {/* Everything inside AuthProvider now has access to useAuth() */}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
+    </html>
+  );
+}
+How to use it in your components
+Now, in any component (like a Login page), you can simply do:
+code
+Tsx
+"use client";
+import { useAuth } from "@/context/AuthContext";
+
+const LoginPage = () => {
+  const { login, user } = useAuth();
+
+  const handleLogin = async () => {
+    try {
+      await login("admin@healthcare.com", "password123");
+      alert("Logged in!");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <div>
+      {user ? <p>Welcome, {user.email}</p> : <button onClick={handleLogin}>Log In</button>}
+    </div>
+  );
+};
+Next Steps
+Would you like to move to Phase 3: Building the Registration/Login Forms or Phase 4: Creating a Protected Dashboard for the students?
+Model
+ThinkingThoughts
+Expand to view model thoughts
+
+chevron_right
+For Phase 3, we will set up a Firebase Cloud Function to handle payments securely. Using a backend function prevents your Stripe Secret Key from being exposed in the frontend.
+Step 1: Initialize Firebase Functions
+In your terminal, run the following to set up the functions directory:
+code
+Bash
+# Initialize functions in your project root
+firebase init functions
+Select TypeScript.
+Select Yes to use ESLint.
+Select Yes to install dependencies.
+Then, navigate to the functions folder and install Stripe:
+code
+Bash
+cd functions
+npm install stripe
+Step 2: The Cloud Function (TypeScript)
+Replace the content of functions/src/index.ts with the following code. We will use a Callable Function (onCall), which automatically handles authentication context.
+code
+TypeScript
+import * as functions from "firebase-functions/v2";
+import Stripe from "stripe";
+
+// Initialize Stripe with the secret key from environment variables
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: "2023-10-16", // Use the latest stable version
+});
+
+export const createStripeCheckout = functions.https.onCall(async (request) => {
+  // 1. Ensure the user is authenticated
+  if (!request.auth) {
+    throw new functions.https.HttpsError(
+      "unauthenticated",
+      "The function must be called while authenticated."
+    );
+  }
+
+  const userId = request.data.userId;
+  const userEmail = request.auth.token.email;
+
+  try {
+    // 2. Create the Stripe Checkout Session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: "4-Week Director of Nursing Leadership Certification",
+              description: "Full access to the 4-week intensive leadership program.",
+            },
+            unit_amount: 49900, // Amount in cents ($499.00)
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: `${process.env.ALLOWED_ORIGIN}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.ALLOWED_ORIGIN}/pricing`,
+      customer_email: userEmail,
+      metadata: {
+        userId: userId, // Tracking the user in Stripe Dashboard
+      },
+    });
+
+    // 3. Return the session URL
+    return { url: session.url };
+  } catch (error) {
+    console.error("Stripe Error:", error);
+    throw new functions.https.HttpsError("internal", "Unable to create checkout session.");
+  }
+});
+Step 3: Environment Variables Checklist
+You must set these variables in the Firebase Console (under Functions > Configuration) or via a .env file inside the functions/ directory:
+STRIPE_SECRET_KEY: Found in your Stripe Dashboard (starts with sk_test_ or sk_live_).
+ALLOWED_ORIGIN: The URL of your Next.js app (e.g., http://localhost:3000 for local dev or https://yourdomain.com for production).
+To set them via CLI:
+code
+Bash
+firebase functions:secrets:set STRIPE_SECRET_KEY
+Step 4: How to call it from your Next.js Frontend
+In your component (e.g., a "Buy Now" button), you can trigger the checkout like this:
+code
+Tsx
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { useAuth } from "@/context/AuthContext";
+
+const handlePayment = async () => {
+  const functions = getFunctions();
+  const createCheckout = httpsCallable(functions, 'createStripeCheckout');
+  
+  try {
+    const result = await createCheckout({ userId: user.uid });
+    const { url } = result.data as { url: string };
+    
+    // Redirect the user to Stripe Checkout
+    window.location.href = url;
+  } catch (error) {
+    console.error("Payment initialization failed:", error);
+  }
+};
+Next Steps
+Deployment: Run firebase deploy --only functions to push this to the cloud.
+Webhooks (Optional Phase 4): Would you like to set up a Stripe Webhook to automatically update the user's "Paid" status in Firestore once the payment is successful?
+Model
+ThinkingThoughts
+Expand to view model thoughts
+
+chevron_right
+For Phase 4, we will create an HTTP Webhook handler. This is a critical security step: while the frontend redirect (Phase 3) is good for user experience, the Webhook is the only way to guaranteed-update your database even if a user closes their browser before the redirect finishes.
+Step 1: Update your Cloud Functions
+In functions/src/index.ts, add the following code. Note that we use onRequest here because Stripe sends a standard POST request, not a Firebase-specific callable.
+code
+TypeScript
+import * as functions from "firebase-functions/v2";
+import * as admin from "firebase-admin";
+import Stripe from "stripe";
+
+// Initialize Admin SDK to update Firestore
+if (admin.apps.length === 0) {
+  admin.initializeApp();
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: "2023-10-16",
+});
+
+// The secret key used to verify that the request actually came from Stripe
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
+
+export const handleStripeWebhook = functions.https.onRequest(async (req, res) => {
+  const sig = req.headers["stripe-signature"] as string;
+  let event: Stripe.Event;
+
+  try {
+    // 1. Verify the signature using the raw body and the webhook secret
+    event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
+  } catch (err: any) {
+    console.error(`Webhook Signature verification failed: ${err.message}`);
+    res.status(400).send(`Webhook Error: ${err.message}`);
+    return;
+  }
+
+  // 2. Handle the specific event type
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object as Stripe.Checkout.Session;
+
+    // Retrieve the userId we stored in metadata during Phase 3
+    const userId = session.metadata?.userId;
+
+    if (userId) {
+      try {
+        // 3. Update the user's document in Firestore
+        await admin.firestore().collection("users").doc(userId).set({
+          isEnrolled: true,
+          enrolledAt: admin.firestore.FieldValue.serverTimestamp(),
+          stripeCustomerId: session.customer,
+        }, { merge: true });
+
+        console.log(`Successfully enrolled user: ${userId}`);
+      } catch (dbError) {
+        console.error("Firestore update failed:", dbError);
+        res.status(500).end();
+        return;
+      }
+    }
+  }
+
+  // 4. Return a 200 response to acknowledge receipt of the event
+  res.json({ received: true });
+});
+Step 2: Set your Environment Variables
+You now need a third environment variable.
+STRIPE_WEBHOOK_SECRET:
+For Production: Get this from your Stripe Dashboard. Click "Add endpoint," enter your function URL, select checkout.session.completed, and reveal the "Signing secret."
+For Local Testing: Use the Stripe CLI and run stripe listen --forward-to localhost:5001/your-project/us-central1/handleStripeWebhook. It will provide a secret starting with whsec_.
+Set it via CLI:
+code
+Bash
+firebase functions:secrets:set STRIPE_WEBHOOK_SECRET
+Step 3: Deploying
+Run this command to deploy your new webhook:
+code
+Bash
+firebase deploy --only functions
+After deployment, Firebase will provide a URL for this function (e.g., https://handlestripewebhook-xyz.a.run.app). You must paste this URL into the Stripe Dashboard Webhooks section.
+Step 4: Connecting the Frontend Logic
+Now that the database updates automatically, you can use the isEnrolled flag in your Next.js app to protect content.
+In your Dashboard component:
+code
+Tsx
+"use client";
+import { useEffect, useState } from 'react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase'; // Ensure you export 'db' from firebase.ts
+import { useAuth } from '@/context/AuthContext';
+
+const Dashboard = () => {
+  const { user } = useAuth();
+  const [isEnrolled, setIsEnrolled] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      const checkStatus = async () => {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists() && userDoc.data().isEnrolled) {
+          setIsEnrolled(true);
+        }
+      };
+      checkStatus();
+    }
+  }, [user]);
+
+  if (!isEnrolled) return <p>Please enroll to view the course content.</p>;
+
+  return <div>Welcome to the 4-Week DON Certification Course Materials!</div>;
+};
+Summary of what we've built:
+Frontend: Next.js app with Tailwind components.
+Auth: Firebase Context for login/registration.
+Payment: Secure Cloud Function to create Stripe sessions.
+Database Automation: Webhook to automatically grant access once payment is confirmed.
