@@ -1,60 +1,139 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, Users, Trophy, Target } from 'lucide-react';
-
-const features = [
-    {
-        icon: <Target className="w-8 h-8 text-sky-400" />,
-        title: "Strategic Vision",
-        description: "Learn to see the bigger picture and plan your career with precision."
-    },
-    {
-        icon: <Users className="w-8 h-8 text-violet-500" />,
-        title: "Network Building",
-        description: "Connect with industry leaders and like-minded peers."
-    },
-    {
-        icon: <BookOpen className="w-8 h-8 text-amber-500" />,
-        title: "Practical Skills",
-        description: "Hands-on projects that apply directly to real-world scenarios."
-    },
-    {
-        icon: <Trophy className="w-8 h-8 text-pink-500" />,
-        title: "Certification",
-        description: "Earn a recognized certificate to validate your expertise."
-    }
-];
+import { ChevronDown, ChevronUp, CheckCircle } from 'lucide-react';
 
 const ProgramSection = () => {
+    const [openWeek, setOpenWeek] = useState(1);
+
+    const toggleWeek = (week) => {
+        setOpenWeek(openWeek === week ? null : week);
+    };
+
     return (
-        <section className="py-24 bg-slate-900 relative">
-            <div className="container mx-auto px-4">
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose NextGen Don?</h2>
-                    <p className="text-slate-400 max-w-2xl mx-auto">
-                        Our comprehensive curriculum is designed to transform potential into power.
-                    </p>
+        <section className="section" style={{ background: '#0f172a', color: 'white' }}>
+            <div className="container">
+
+                {/* PART 1: Intro */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', marginBottom: '6rem', alignItems: 'center' }}>
+                    <div>
+                        <div style={{
+                            width: '100%',
+                            height: '400px',
+                            borderRadius: '12px',
+                            overflow: 'hidden',
+                            backgroundImage: 'url(/advance1.png)',
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center'
+                        }}></div>
+                    </div>
+                    <div>
+                        <h4 style={{ color: '#0ea5e9', fontWeight: 'bold', letterSpacing: '2px', marginBottom: '1rem', fontSize: '1.2rem' }}>PROGRAMS</h4>
+                        <h2 style={{ fontSize: '2.5rem', lineHeight: '1.2', marginBottom: '1.5rem', fontFamily: 'var(--font-heading)' }}>
+                            Director of Nursing Leadership Certification Program
+                        </h2>
+                        <p style={{ color: '#94a3b8', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '2rem' }}>
+                            A 4-week professional development course designed to elevate DONs, ADONs, nurse managers and aspiring nurse leaders into confident, compliant and strategic healthcare administrators.
+                        </p>
+                        <button className="btn btn-primary" style={{ background: '#0ea5e9' }}>
+                            View Program Details
+                        </button>
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {features.map((feature, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            viewport={{ once: true }}
-                            className="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50 hover:bg-slate-800 transition-colors"
-                        >
-                            <div className="mb-4 p-3 bg-slate-900 rounded-lg inline-block">
-                                {feature.icon}
+                {/* PART 2: Why Choose - Grid */}
+                <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+                    <h3 style={{ fontSize: '2rem', marginBottom: '3rem', fontFamily: 'var(--font-heading)' }}>Why Choose NextGen DON Academy</h3>
+                    <div className="features-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+                        {[
+                            { title: 'Leadership Development', desc: 'Grow into a confident and effective nursing leader who inspires teams and drives results.' },
+                            { title: 'Recognized Certification', desc: 'Graduate with a professional DON Leadership Certificate that validates your expertise.' },
+                            { title: 'Operational Excellence', desc: 'Gain practical skills in staffing, scheduling, budgeting, and workflow optimization.' },
+                            { title: 'Quality Improvement Training', desc: 'Learn how to use data, audits, and metrics to improve patient care outcomes.' },
+                            { title: 'Staff Development & Retention', desc: 'Build strong, high-performing nursing teams & create a culture of trust & accountability.' },
+                            { title: 'Regulatory & Compliance Mastery', desc: 'Understand CMS standards, survey readiness, and best practices.' }
+                        ].map((item, idx) => (
+                            <div key={idx} style={{
+                                background: '#1e293b',
+                                padding: '2rem',
+                                borderRadius: '8px',
+                                border: '1px solid rgba(255,255,255,0.05)',
+                                textAlign: 'center'
+                            }}>
+                                <h4 style={{ color: 'white', fontSize: '1.1rem', marginBottom: '1rem' }}>{item.title}</h4>
+                                <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>{item.desc}</p>
                             </div>
-                            <h3 className="text-xl font-bold mb-2 text-white">{feature.title}</h3>
-                            <p className="text-slate-400 text-sm leading-relaxed">
-                                {feature.description}
-                            </p>
-                        </motion.div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
+
+                {/* PART 3: Curriculum & Outcome */}
+                <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: '0' }}>
+                    <div style={{
+                        background: '#1e293b',
+                        border: '1px solid #334155'
+                    }}>
+                        {[1, 2, 3, 4].map((week) => (
+                            <div key={week} style={{ borderBottom: '1px solid #334155' }}>
+                                <button
+                                    onClick={() => toggleWeek(week)}
+                                    style={{
+                                        width: '100%',
+                                        padding: '1.5rem',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        background: 'transparent',
+                                        color: 'white',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        textAlign: 'left'
+                                    }}
+                                >
+                                    <span style={{ fontWeight: 'bold' }}>Week {week} {week === 1 && '- Foundations of DON Leadership'}</span>
+                                    {openWeek === week ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                                </button>
+                                {openWeek === week && (
+                                    <div style={{ padding: '0 1.5rem 1.5rem 1.5rem', color: '#cbd5e1', fontSize: '0.95rem' }}>
+                                        <p style={{ marginBottom: '1rem', fontStyle: 'italic' }}>Theme: Understanding the Role & Power of the DON</p>
+                                        <ul style={{ listStyle: 'disc', paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                            <li>Defining the modern DON's role in long-term care</li>
+                                            <li>Leadership styles and emotional intelligence</li>
+                                            <li>Building credibility and leading with integrity</li>
+                                            <li>Establishing a leadership vision and culture of care</li>
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+
+                    <div style={{
+                        background: '#0ea5e9',
+                        padding: '3rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        color: 'white'
+                    }}>
+                        <h3 style={{ fontSize: '1.8rem', marginBottom: '1.5rem', fontFamily: 'var(--font-heading)' }}>Certification Outcome</h3>
+                        <p style={{ marginBottom: '2rem', lineHeight: '1.6' }}>
+                            Graduates of NextGen DON Academy will demonstrate excellence in clinical, operational, and leadership competencies. Lead with confidence, empathy, and regulatory precision. Create positive vs. compliant, high-performing nursing teams. Be recognized as NextGen Certified Directors of Nursing - ready to transform care in any setting.
+                        </p>
+                        <button style={{
+                            background: 'white',
+                            color: '#0ea5e9',
+                            padding: '12px 24px',
+                            borderRadius: '50px',
+                            border: 'none',
+                            fontWeight: 'bold',
+                            alignSelf: 'flex-start',
+                            cursor: 'pointer'
+                        }}>
+                            Start Your Journey Today
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </section>
     );

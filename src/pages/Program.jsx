@@ -1,79 +1,112 @@
-import { motion } from 'framer-motion';
-import { CheckCircle } from 'lucide-react';
-
-const curriculum = [
+const weeks = [
     {
-        week: "Week 1",
-        title: "The Foundation of Power",
-        topics: ["Mindset Shift: From Player to Don", "Strategic Thinking Fundamentals", "Building Your Personal Brand", "Networking 101"]
+        label: 'WEEK 1',
+        title: 'Foundations of DON Leadership',
+        theme: 'Understanding the Role & Power of the DON',
+        focus: 'Leadership identity, professional accountability, and the impact of the DON on care quality.'
     },
     {
-        week: "Week 2",
-        title: "Advanced Strategy",
-        topics: ["Negotiation Mastery", "Influence and Persuasion", "Financial Literacy for Leaders", "Risk Management"]
+        label: 'WEEK 2',
+        title: 'Clinical & Regulatory Mastery',
+        theme: 'Ensuring Safe, Compliant, High-Quality Care',
+        focus: 'Deep dive into compliance standards and quality assurance.'
     },
     {
-        week: "Week 3",
-        title: "Operational Excellence",
-        topics: ["Project Management", "Team Leadership", "Digital Tools for Efficiency", "Public Speaking"]
+        label: 'WEEK 3',
+        title: 'Data-Driven Quality Improvement',
+        theme: 'Turning Data into Action',
+        focus: 'Using metrics and reports to improve outcomes and drive decisions.'
     },
     {
-        week: "Week 4",
-        title: "The Launchpad",
-        topics: ["Career Mapping", "Investment Strategies", "Final Capstone Project", "Graduation & Network Initiation"]
+        label: 'WEEK 4',
+        title: 'Strategic Leadership & Change Management',
+        theme: 'Leading Change in a Complex Healthcare Environment',
+        focus: 'Managing transitions, innovation, and organizational culture.'
     }
 ];
 
 const Program = () => {
     return (
-        <div className="pt-20">
-            <section className="bg-slate-900 py-20">
-                <div className="container mx-auto px-4 text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-6">The Curriculum</h1>
-                    <p className="text-xl text-slate-400 max-w-3xl mx-auto">
-                        A rigorous 4-week journey designed to transform your potential into tangible power.
-                    </p>
+        <div className="pt-20" style={{ background: '#101827', color: '#e5e7eb' }}>
+            {/* Hero */}
+            <section style={{ background: 'var(--primary)', padding: '70px 0', position: 'relative' }}>
+                <div className="container" style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
+                    <h1 style={{ fontSize: '2.5rem', fontFamily: 'var(--font-heading)', color: '#fff' }}>Our Programs</h1>
                 </div>
+                <div
+                    style={{
+                        position: 'absolute',
+                        right: '-8%',
+                        top: '-20%',
+                        width: '34%',
+                        height: '220%',
+                        borderRadius: '999px',
+                        background: 'rgba(255,255,255,0.12)'
+                    }}
+                />
             </section>
 
-            <section className="py-20">
-                <div className="container mx-auto px-4 max-w-4xl">
-                    <div className="space-y-8">
-                        {curriculum.map((module, index) => (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.1 }}
-                                className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden"
-                            >
-                                <div className="p-6 md:p-8 border-b border-slate-700 bg-slate-800/50">
-                                    <span className="text-sm font-bold text-violet-400 uppercase tracking-wider block mb-2">{module.week}</span>
-                                    <h2 className="text-2xl font-bold text-white">{module.title}</h2>
+            {/* Program Grid */}
+            <section style={{ background: '#111827', padding: '90px 0 110px' }}>
+                <div className="container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                    <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+                        <h2 style={{ fontSize: '1.7rem', color: '#f8fafc', fontFamily: 'var(--font-heading)' }}>
+                            4-Week Director of Nursing Leadership Certification Program
+                        </h2>
+                    </div>
+                    <div
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(480px, 1fr))',
+                            gap: '3.5rem 2.5rem',
+                            justifyItems: 'center'
+                        }}
+                    >
+                        {weeks.map((week) => (
+                            <div key={week.label} style={{ maxWidth: '520px', width: '100%' }}>
+                                <div
+                                    style={{
+                                        background: '#f4f4f5',
+                                        color: '#0f172a',
+                                        border: '1px solid #d4d4d8',
+                                        borderRadius: '4px',
+                                        height: '420px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginBottom: '18px'
+                                    }}
+                                >
+                                    <span style={{ fontSize: '2.6rem', fontWeight: 800, letterSpacing: '0.01em' }}>{week.label}</span>
                                 </div>
-                                <div className="p-6 md:p-8 bg-slate-900/50">
-                                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {module.topics.map((topic, i) => (
-                                            <li key={i} className="flex items-start gap-3">
-                                                <CheckCircle className="w-5 h-5 text-sky-400 mt-1 flex-shrink-0" />
-                                                <span className="text-slate-300">{topic}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </motion.div>
+
+                                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '8px', color: '#f8fafc', fontFamily: 'var(--font-heading)' }}>
+                                    {week.title}
+                                </h3>
+                                <p style={{ fontSize: '0.92rem', marginBottom: '6px', color: '#e5e7eb' }}>
+                                    <strong>Theme:</strong> {week.theme}
+                                </p>
+                                <p style={{ fontSize: '0.92rem', color: '#d1d5db', lineHeight: 1.7 }}>
+                                    <strong>Focus:</strong> {week.focus}
+                                </p>
+                                <a
+                                    href="/enquiry"
+                                    style={{
+                                        display: 'inline-block',
+                                        marginTop: '14px',
+                                        background: '#0ea5e9',
+                                        color: '#fff',
+                                        padding: '10px 18px',
+                                        borderRadius: '999px',
+                                        fontSize: '0.9rem',
+                                        fontWeight: 700
+                                    }}
+                                >
+                                    Read More
+                                </a>
+                            </div>
                         ))}
                     </div>
-                </div>
-            </section>
-
-            <section className="py-20 bg-gradient-to-br from-violet-900/20 to-sky-900/20">
-                <div className="container mx-auto px-4 text-center">
-                    <h2 className="text-3xl font-bold mb-8">Ready to Commit?</h2>
-                    <a href="/enquiry" className="btn btn-primary text-lg px-8 py-4 inline-block">
-                        Apply for the Program
-                    </a>
                 </div>
             </section>
         </div>

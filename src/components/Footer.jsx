@@ -1,69 +1,55 @@
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 
 const Footer = () => {
     return (
-        <footer className="bg-slate-900 border-t border-slate-800 pt-16 pb-8">
-            <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        <footer className="footer" style={{ background: '#c026d3', color: 'white', padding: '60px 0 20px' }}>
+            <div className="container">
+                <div className="footer-grid" style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '2rem',
+                    marginBottom: '3rem'
+                }}>
                     {/* Brand */}
-                    <div className="col-span-1 md:col-span-1">
-                        <h3 className="text-xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-sky-400">
-                            NextGen Don Academy
-                        </h3>
-                        <p className="text-slate-400 text-sm leading-relaxed">
-                            Empowering the next generation with essential skills for success.
+                    <div className="footer-col">
+                        <Link to="/" style={{ display: 'inline-block', marginBottom: '1rem' }}>
+                            <img src="/Logo_nda.png" alt="NextGen DON Academy" style={{ height: '60px', objectFit: 'contain' }} />
+                        </Link>
+                        <p style={{ lineHeight: '1.6', opacity: 0.9 }}>
+                            Empowering the Leaders Behind Quality Care.
                         </p>
                     </div>
 
                     {/* Quick Links */}
-                    <div className="col-span-1">
-                        <h4 className="text-white font-semibold mb-4">Quick Links</h4>
-                        <ul className="space-y-2 text-sm text-slate-400">
-                            <li><Link to="/about" className="hover:text-sky-400 transition-colors">About Us</Link></li>
-                            <li><Link to="/program" className="hover:text-sky-400 transition-colors">Our Program</Link></li>
-                            <li><Link to="/contact" className="hover:text-sky-400 transition-colors">Contact</Link></li>
-                            <li><Link to="/privacy" className="hover:text-sky-400 transition-colors">Privacy Policy</Link></li>
+                    <div className="footer-col">
+                        <h4 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>Quick Links</h4>
+                        <ul className="footer-links" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                            <li><Link to="/" style={{ color: 'white' }}>Home</Link></li>
+                            <li><Link to="/about" style={{ color: 'white' }}>About</Link></li>
+                            <li><Link to="/program" style={{ color: 'white' }}>Program</Link></li>
+                            <li><Link to="/career" style={{ color: 'white' }}>Career</Link></li>
+                            <li><Link to="/enquiry" style={{ color: 'white' }}>Inquiry</Link></li>
                         </ul>
                     </div>
 
                     {/* Contact */}
-                    <div className="col-span-1">
-                        <h4 className="text-white font-semibold mb-4">Contact Us</h4>
-                        <ul className="space-y-3 text-sm text-slate-400">
-                            <li className="flex items-center gap-2">
-                                <Mail size={16} className="text-sky-400" />
-                                <span>info@nextgendonacademy.com</span>
+                    <div className="footer-col">
+                        <h4 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>Contact</h4>
+                        <ul className="footer-links" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <li style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <Phone size={18} />
+                                <span>+1 (407) 965-5152</span>
                             </li>
-                            <li className="flex items-center gap-2">
-                                <Phone size={16} className="text-sky-400" />
-                                <span>+1 (555) 123-4567</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <MapPin size={16} className="text-sky-400 mt-1" />
-                                <span>123 Innovation Dr,<br />Tech City, TC 90210</span>
+                            <li style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <Mail size={18} />
+                                <a href="mailto:info@nextgendonacademy.com" style={{ color: 'white' }}>info@nextgendonacademy.com</a>
                             </li>
                         </ul>
                     </div>
-
-                    {/* Social */}
-                    <div className="col-span-1">
-                        <h4 className="text-white font-semibold mb-4">Follow Us</h4>
-                        <div className="flex space-x-4">
-                            <a href="#" className="p-2 bg-slate-800 rounded-full hover:bg-slate-700 transition-colors text-sky-400">
-                                <Facebook size={20} />
-                            </a>
-                            <a href="#" className="p-2 bg-slate-800 rounded-full hover:bg-slate-700 transition-colors text-pink-500">
-                                <Instagram size={20} />
-                            </a>
-                            <a href="#" className="p-2 bg-slate-800 rounded-full hover:bg-slate-700 transition-colors text-blue-500">
-                                <Linkedin size={20} />
-                            </a>
-                        </div>
-                    </div>
                 </div>
 
-                <div className="border-t border-slate-800 pt-8 text-center text-slate-500 text-sm">
+                <div className="footer-bottom" style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '20px', textAlign: 'center', fontSize: '0.9rem' }}>
                     <p>&copy; {new Date().getFullYear()} NextGen Don Academy. All rights reserved.</p>
                 </div>
             </div>
