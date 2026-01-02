@@ -1,0 +1,87 @@
+This is perfect. Based on my analysis of netgen-don-academy.web.app (and its associated content for "NextGen DON Academy"), your site is a professional training platform for Directors of Nursing.
+
+The Strategy: You don't just want a generic "chat bot." You need an Admissions Assistant who can explain your "Foundations of DON Leadership" course, discuss tuition, and book consultation calls.
+
+Here are the specific, ready-to-use prompts you can paste into  Claude Code to build this directly into your existing Firebase project.
+
+Phase 1: The "Brain" (Knowledge Base)
+First, we need to create the file that holds your academy's intelligence.
+
+Prompt for Claude:
+
+"Create a new file in the backend folder called academy_data.py. Inside it, create a constant variable SYSTEM_INSTRUCTIONS containing a detailed system prompt for an AI assistant.
+
+The Persona: You are 'Sarah,' the Admissions Assistant for NextGen DON Academy. You are professional, knowledgeable about nursing leadership, and encouraging.
+
+The Knowledge Base (Include these facts):
+
+Purpose: We train aspiring Directors of Nursing (DONs) for long-term care facilities.
+
+Key Courses: 'Foundations of DON Leadership' (covers emotional intelligence, credibility), 'Staff Development' (retention strategies), and 'Financial Stewardship' (budgeting).
+
+Contact: Phone is (248) 795-9750, Email is info@nextgendonacademy.com.
+
+Goal: Your primary goal is to answer questions and then ask, 'Would you like to schedule a quick 15-minute consultation to see if this program is a good fit?'
+
+Constraint: Keep responses concise (under 2 sentences) for voice conversations."
+
+Phase 2: The Voice Server (The Backend)
+Now, we build the engine that handles the calls. Since you are on Firebase, we will use a Cloud Run service (managed via your existing project) because it handles the "WebSockets" required for real-time voice better than standard Functions.
+
+Prompt for Antigravity/Claude:
+
+"I need a Python FastAPI backend to handle real-time voice calls using Twilio and OpenAI.
+
+Task: Create a file main.py with the following:
+
+Dependencies: fastapi, uvicorn, websockets, requests.
+
+Route 1 (POST /incoming-call): Return TwiML that connects the caller to a Stream at /media-stream.
+
+Route 2 (WebSocket /media-stream):
+
+Accept the WebSocket connection from Twilio.
+
+Open a connection to wss://api.openai.com/v1/realtime (model: gpt-4o-realtime-preview).
+
+Send the SYSTEM_INSTRUCTIONS from academy_data.py as the first session update.
+
+The Loop: Receive audio from Twilio -> Send to OpenAI -> Receive audio from OpenAI -> Play to Twilio.
+
+Tool Calling: Add a tool definition for book_appointment(name, time, phone). If the user wants to book, the AI should call this tool. For now, just print the details to the console log.
+
+Please write the complete code and a Dockerfile to deploy this to Google Cloud Run."
+
+Phase 3: The Text Chat Widget (The Frontend)
+Finally, let's put the chat bubble on your website.
+
+Prompt for Antigravity/Claude:
+
+"Act as a React Developer. I need a floating chat widget for my website.
+
+Task: Create a React component ChatWidget.js.
+
+UI: A floating circle icon in the bottom-right. When clicked, it opens a chat window.
+
+Style: Use a professional color scheme (Navy Blue and White) to match the NextGen DON Academy branding.
+
+Logic:
+
+User types a message.
+
+Send POST request to a new endpoint /api/chat (which you should add to main.py).
+
+Display the AI's response.
+
+Backend Update: Update main.py to add the /api/chat endpoint that uses the standard OpenAI chat completion API (not realtime) but uses the same SYSTEM_INSTRUCTIONS."
+
+How to Deploy 
+Once Claude writes the code:
+
+Deploy the Backend: Tell Antigravity: "Deploy this folder to Google Cloud Run named 'don-academy-voice'."
+
+Connect Twilio: Go to your Twilio dashboard and set the "Voice Webhook" to your new Cloud Run URL (e.g., https://don-academy-voice-xyz.a.run.app/incoming-call).
+
+Update Frontend: Import the ChatWidget into your main App.js file on your website and redeploy to Firebase Hosting.
+
+Do you want me to write the "Tool Function" code specifically so it saves appointments directly into your Firebase Firestore database?

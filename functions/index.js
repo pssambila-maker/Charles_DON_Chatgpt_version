@@ -1,4 +1,6 @@
-const functions = require('firebase-functions');
+const { onCall, HttpsError } = require('firebase-functions/v2/https');
+const { onDocumentCreated } = require('firebase-functions/v2/firestore');
+const { defineString } = require('firebase-functions/params');
 const admin = require('firebase-admin');
 const sgMail = require('@sendgrid/mail');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -6,27 +8,28 @@ const { SYSTEM_INSTRUCTIONS } = require('./academyKnowledge');
 
 admin.initializeApp();
 
-// SendGrid API Key will be set via environment variable
-// Set it with: firebase functions:config:set sendgrid.key="YOUR_SENDGRID_API_KEY"
-const SENDGRID_API_KEY = functions.config().sendgrid?.key;
-if (SENDGRID_API_KEY) {
-    sgMail.setApiKey(SENDGRID_API_KEY);
-}
+// Define environment parameters (new v7 approach)
+const sendgridKey = defineString('SENDGRID_KEY');
+const geminiKey = defineString('GEMINI_KEY');
 
-// Your admin email for notifications
+// SendGrid setup
 const ADMIN_EMAIL = 'info@nextgendonacademy.com';
 const FROM_EMAIL = 'info@nextgendonacademy.com'; // Must be verified in SendGrid
 
 /**
  * Send email notification when a new enquiry is submitted
  */
-exports.onEnquiryCreated = functions.firestore
-    .document('enquiries/{enquiryId}')
-    .onCreate(async (snap, context) => {
-        const enquiry = snap.data();
-        const enquiryId = context.params.enquiryId;
+exports.onEnquiryCreated = onDocumentCreated('enquiries/{enquiryId}', async (event) => {
+        const enquiry = event.data.data();
+        const enquiryId = event.params.enquiryId;
 
         console.log('New enquiry received:', enquiryId);
+
+        // Initialize SendGrid with the API key
+        const apiKey = sendgridKey.value();
+        if (apiKey) {
+            sgMail.setApiKey(apiKey);
+        }
 
         try {
             // Email to the user (confirmation)
@@ -155,13 +158,17 @@ exports.onEnquiryCreated = functions.firestore
 /**
  * Send email notification when someone subscribes to newsletter
  */
-exports.onNewsletterSubscribe = functions.firestore
-    .document('newsletter/{subscriberId}')
-    .onCreate(async (snap, context) => {
-        const subscriber = snap.data();
-        const subscriberId = context.params.subscriberId;
+exports.onNewsletterSubscribe = onDocumentCreated('newsletter/{subscriberId}', async (event) => {
+        const subscriber = event.data.data();
+        const subscriberId = event.params.subscriberId;
 
         console.log('New newsletter subscriber:', subscriberId);
+
+        // Initialize SendGrid with the API key
+        const apiKey = sendgridKey.value();
+        if (apiKey) {
+            sgMail.setApiKey(apiKey);
+        }
 
         try {
             // Email to the subscriber (welcome email)
@@ -281,27 +288,26 @@ exports.onNewsletterSubscribe = functions.firestore
  * Chat with Sarah - AI Admissions Assistant
  * Uses Google Gemini API for conversational AI
  */
-exports.chatWithSarah = functions.https.onCall(async (data, context) => {
-    const { message, conversationHistory } = data;
+exports.chatWithSarah = onCall(async (request) => {
+    const { message, conversationHistory } = request.data;
 
     console.log('Chat request received:', { message, historyLength: conversationHistory?.length || 0 });
 
     // Validate input
     if (!message || typeof message !== 'string') {
-        throw new functions.https.HttpsError(
+        throw new HttpsError(
             'invalid-argument',
             'Message is required and must be a string'
         );
     }
 
     try {
-        // Get Gemini API key from environment config
-        // Set it with: firebase functions:config:set gemini.key="YOUR_GEMINI_API_KEY"
-        const GEMINI_API_KEY = functions.config().gemini?.key;
+        // Get Gemini API key from environment parameters
+        const GEMINI_API_KEY = geminiKey.value();
 
         if (!GEMINI_API_KEY) {
             console.error('Gemini API key not configured');
-            throw new functions.https.HttpsError(
+            throw new HttpsError(
                 'failed-precondition',
                 'AI service is not configured. Please contact support.'
             );
@@ -385,13 +391,13 @@ exports.chatWithSarah = functions.https.onCall(async (data, context) => {
 
         // Return user-friendly error
         if (error.code?.includes('quota')) {
-            throw new functions.https.HttpsError(
+            throw new HttpsError(
                 'resource-exhausted',
                 'AI service is temporarily busy. Please try again in a moment.'
             );
         }
 
-        throw new functions.https.HttpsError(
+        throw new HttpsError(
             'internal',
             'Sorry, I\'m having trouble responding right now. Please try again or call us at (248) 795-9750.'
         );
@@ -402,14 +408,14 @@ exports.chatWithSarah = functions.https.onCall(async (data, context) => {
  * Book an appointment through the chat interface
  * Saves to Firestore and sends email notifications
  */
-exports.bookAppointment = functions.https.onCall(async (data, context) => {
-    const { name, email, phone, preferredDate, preferredTime, notes } = data;
+exports.bookAppointment = onCall(async (request) => {
+    const { name, email, phone, preferredDate, preferredTime, notes } = request.data;
 
     console.log('Appointment booking request:', { name, email, phone });
 
     // Validate required fields
     if (!name || !email || !phone) {
-        throw new functions.https.HttpsError(
+        throw new HttpsError(
             'invalid-argument',
             'Name, email, and phone are required'
         );
@@ -418,7 +424,7 @@ exports.bookAppointment = functions.https.onCall(async (data, context) => {
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-        throw new functions.https.HttpsError(
+        throw new HttpsError(
             'invalid-argument',
             'Invalid email address'
         );
@@ -441,7 +447,9 @@ exports.bookAppointment = functions.https.onCall(async (data, context) => {
         console.log('Appointment saved to Firestore:', appointmentRef.id);
 
         // Send confirmation emails
-        if (SENDGRID_API_KEY) {
+        const apiKey = sendgridKey.value();
+        if (apiKey) {
+            sgMail.setApiKey(apiKey);
             try {
                 // Email to user
                 const userEmail = {
@@ -535,7 +543,7 @@ exports.bookAppointment = functions.https.onCall(async (data, context) => {
 
     } catch (error) {
         console.error('Error booking appointment:', error);
-        throw new functions.https.HttpsError(
+        throw new HttpsError(
             'internal',
             'Failed to book appointment. Please try again or call us at (248) 795-9750.'
         );
