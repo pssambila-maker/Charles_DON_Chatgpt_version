@@ -6,7 +6,7 @@ const Enquiry = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        subject: '',
+        phone: '',
         message: ''
     });
     const [status, setStatus] = useState({ type: '', message: '' });
@@ -22,7 +22,7 @@ const Enquiry = () => {
         setStatus({ type: '', message: '' });
 
         try {
-            if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+            if (!formData.name || !formData.email || !formData.phone || !formData.message) {
                 throw new Error('Please fill in all required fields.');
             }
 
@@ -31,8 +31,8 @@ const Enquiry = () => {
                 createdAt: serverTimestamp()
             });
 
-            setStatus({ type: 'success', message: 'Thank you! Your enquiry has been submitted.' });
-            setFormData({ name: '', email: '', subject: '', message: '' });
+            setStatus({ type: 'success', message: 'Thank you! We\'ll be in touch within 24 hours.' });
+            setFormData({ name: '', email: '', phone: '', message: '' });
         } catch (error) {
             console.error('Error submitting form: ', error);
             setStatus({ type: 'error', message: 'Something went wrong. Please try again later.' });
@@ -65,12 +65,15 @@ const Enquiry = () => {
                             color: '#fff',
                             fontFamily: 'var(--font-heading)',
                             fontSize: '2.4rem',
-                            marginBottom: '32px',
+                            marginBottom: '12px',
                             textAlign: 'center'
                         }}
                     >
-                        Kindly Fill The Form For Your Enquiry
+                        Start Your DON Journey Today
                     </h1>
+                    <p style={{ textAlign: 'center', color: '#e5e7eb', marginBottom: '32px', fontSize: '1.1rem' }}>
+                        Fill out the form below and we'll contact you within 24 hours
+                    </p>
 
                     {status.message && (
                         <div
@@ -124,13 +127,14 @@ const Enquiry = () => {
                             />
                         </div>
                         <div>
-                            <label style={{ display: 'block', marginBottom: '6px', fontWeight: 600 }}>Subject</label>
+                            <label style={{ display: 'block', marginBottom: '6px', fontWeight: 600 }}>Phone Number</label>
                             <input
-                                type="text"
-                                name="subject"
-                                value={formData.subject}
+                                type="tel"
+                                name="phone"
+                                value={formData.phone}
                                 onChange={handleChange}
                                 required
+                                placeholder="(123) 456-7890"
                                 style={{
                                     width: '100%',
                                     padding: '12px 14px',
@@ -142,13 +146,14 @@ const Enquiry = () => {
                             />
                         </div>
                         <div>
-                            <label style={{ display: 'block', marginBottom: '6px', fontWeight: 600 }}>Make Your Enquire</label>
+                            <label style={{ display: 'block', marginBottom: '6px', fontWeight: 600 }}>Tell Us About Your Interest</label>
                             <textarea
                                 name="message"
                                 value={formData.message}
                                 onChange={handleChange}
-                                rows="6"
+                                rows="5"
                                 required
+                                placeholder="Tell us about your goals, experience, or questions about the program..."
                                 style={{
                                     width: '100%',
                                     padding: '12px 14px',
@@ -160,7 +165,7 @@ const Enquiry = () => {
                                 }}
                             />
                         </div>
-                        <div>
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                             <button
                                 type="submit"
                                 disabled={loading}
@@ -168,15 +173,20 @@ const Enquiry = () => {
                                     background: '#0ea5e9',
                                     color: '#fff',
                                     border: 'none',
-                                    padding: '10px 18px',
+                                    padding: '14px 32px',
                                     borderRadius: '999px',
                                     fontWeight: 700,
+                                    fontSize: '1.05rem',
                                     cursor: loading ? 'not-allowed' : 'pointer',
-                                    opacity: loading ? 0.7 : 1
+                                    opacity: loading ? 0.7 : 1,
+                                    transition: 'all 0.2s'
                                 }}
                             >
-                                {loading ? 'Submitting...' : 'Submit'}
+                                {loading ? 'Submitting...' : 'Apply Now'}
                             </button>
+                            <span style={{ color: '#9ca3af', fontSize: '0.9rem' }}>
+                                or call us at <a href="tel:+12487959750" style={{ color: '#0ea5e9', textDecoration: 'underline' }}>+1 (248) 795-9750</a>
+                            </span>
                         </div>
                     </form>
                 </div>

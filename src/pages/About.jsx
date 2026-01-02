@@ -73,11 +73,11 @@ const About = () => {
                     </div>
                     <div>
                         <h2 style={{ fontSize: '2rem', marginBottom: '1rem', color: '#e5e7eb', fontFamily: 'var(--font-heading)' }}>Mission Statement</h2>
-                        <p style={{ color: '#e5e7eb', lineHeight: 1.8, fontWeight: 600, maxWidth: '720px' }}>
+                        <p style={{ color: '#f8fafc', lineHeight: 1.8, fontWeight: 600, maxWidth: '720px', fontSize: '1.15rem' }}>
                             To empower current and aspiring Directors of Nursing with the leadership, clinical expertise, and operational excellence needed to elevate the standard of care in long-term and
                             post-acute settings.
                         </p>
-                        <p style={{ color: '#e5e7eb', lineHeight: 1.8, fontWeight: 600, marginTop: '1.25rem', maxWidth: '720px' }}>
+                        <p style={{ color: '#f8fafc', lineHeight: 1.8, fontWeight: 600, marginTop: '1.25rem', maxWidth: '720px', fontSize: '1.15rem' }}>
                             We are committed to shaping visionary nurse leaders who drive quality, compassion, and compliance at every level of care delivery.
                         </p>
                     </div>
@@ -89,7 +89,7 @@ const About = () => {
                 <div className="container" style={{ display: 'grid', gridTemplateColumns: '1.05fr 0.95fr', gap: '2.5rem', alignItems: 'center' }}>
                     <div>
                         <h3 style={{ color: '#1d4ed8', fontSize: '2rem', fontFamily: 'var(--font-heading)', marginBottom: '1.5rem' }}>Goal</h3>
-                        <p style={{ color: '#f1f5f9', lineHeight: 1.8, fontWeight: 600, maxWidth: '740px' }}>
+                        <p style={{ color: '#f8fafc', lineHeight: 1.8, fontWeight: 600, maxWidth: '740px', fontSize: '1.15rem' }}>
                             Our goal is to cultivate a new generation of nurse leaders who blend clinical mastery with strategic management. Through evidence-based training, mentorship, and real-world
                             application, we prepare DONs to lead confidently, improve outcomes, and foster positive, high-performing teams in every healthcare environment.
                         </p>
@@ -108,7 +108,7 @@ const About = () => {
             <section style={{ background: '#f8fafc', color: '#0f172a', padding: '90px 0' }}>
                 <div className="container" style={{ textAlign: 'center', maxWidth: '1100px' }}>
                     <h3 style={{ color: '#1d4ed8', fontSize: '2rem', fontFamily: 'var(--font-heading)' }}>Who We Are & What We Do</h3>
-                    <p style={{ margin: '1.5rem auto 2.5rem', color: '#111827', fontSize: '1.05rem', lineHeight: 1.7 }}>
+                    <p style={{ margin: '1.5rem auto 2.5rem', color: '#111827', fontSize: '1.2rem', lineHeight: 1.7, fontWeight: '500' }}>
                         At NextGen DON Academy, we believe that exceptional leadership transforms care. We are a specialized training institute designed exclusively for Directors of Nursing - both new and
                         seasoned - who seek to grow beyond routine management into inspired, strategic leadership.
                     </p>
@@ -154,7 +154,7 @@ const About = () => {
                     <div>
                         <h4 style={{ color: '#1d4ed8', fontSize: '1.5rem', fontFamily: 'var(--font-heading)', marginBottom: '0.75rem' }}>Professional & Vision-Driven</h4>
                         <h3 style={{ color: '#f8fafc', fontSize: '2rem', fontFamily: 'var(--font-heading)', marginBottom: '1.5rem' }}>Committed to the Excellence</h3>
-                        <div style={{ color: '#f8fafc', lineHeight: 1.8, fontWeight: 700, display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                        <div style={{ color: '#f8fafc', lineHeight: 1.8, fontWeight: 600, display: 'flex', flexDirection: 'column', gap: '1.25rem', fontSize: '1.1rem' }}>
                             <p>
                                 At NextGen DON Academy (NDA), we are redefining what it means to lead in long-term care. Founded with a passion for nursing excellence, NDA equips current and aspiring
                                 Directors of Nursing with the skills, knowledge, and confidence to thrive in today's complex healthcare environment.
@@ -192,14 +192,17 @@ const About = () => {
                         <Phone />
                         <div>
                             <div>Call Today</div>
-                            <div style={{ fontWeight: 800 }}>+123 456 7890</div>
+                            <div style={{ fontWeight: 800 }}>
+                                <a href="tel:+12487959750" style={{ color: 'inherit', textDecoration: 'none' }}>
+                                    +1 (248) 795-9750
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', fontWeight: 700 }}>
                         <MapPin />
                         <div>
-                            <div>123 Fifth Ave, New York, NY</div>
-                            <div>12004, USA.</div>
+                            <div>995 N. Pontiac Trail, Walled Lake, MI 48390</div>
                         </div>
                     </div>
                     <div style={{ fontWeight: 800 }}>Schedule a Virtual Appointment</div>

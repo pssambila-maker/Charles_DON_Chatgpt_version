@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronDown, ChevronUp, CheckCircle } from 'lucide-react';
 
@@ -31,12 +32,12 @@ const ProgramSection = () => {
                         <h2 style={{ fontSize: '2.5rem', lineHeight: '1.2', marginBottom: '1.5rem', fontFamily: 'var(--font-heading)' }}>
                             Director of Nursing Leadership Certification Program
                         </h2>
-                        <p style={{ color: '#94a3b8', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '2rem' }}>
+                        <p style={{ color: '#e5e7eb', fontSize: '1.25rem', lineHeight: '1.7', marginBottom: '2rem', fontWeight: '500' }}>
                             A 4-week professional development course designed to elevate DONs, ADONs, nurse managers and aspiring nurse leaders into confident, compliant and strategic healthcare administrators.
                         </p>
-                        <button className="btn btn-primary" style={{ background: '#0ea5e9' }}>
+                        <Link to="/program" className="btn btn-primary" style={{ background: '#0ea5e9', display: 'inline-block' }}>
                             View Program Details
-                        </button>
+                        </Link>
                     </div>
                 </div>
 
@@ -119,7 +120,7 @@ const ProgramSection = () => {
                         <p style={{ marginBottom: '2rem', lineHeight: '1.6' }}>
                             Graduates of NextGen DON Academy will demonstrate excellence in clinical, operational, and leadership competencies. Lead with confidence, empathy, and regulatory precision. Create positive vs. compliant, high-performing nursing teams. Be recognized as NextGen Certified Directors of Nursing - ready to transform care in any setting.
                         </p>
-                        <button style={{
+                        <Link to="/enquiry" style={{
                             background: 'white',
                             color: '#0ea5e9',
                             padding: '12px 24px',
@@ -127,10 +128,12 @@ const ProgramSection = () => {
                             border: 'none',
                             fontWeight: 'bold',
                             alignSelf: 'flex-start',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            display: 'inline-block',
+                            textDecoration: 'none'
                         }}>
                             Start Your Journey Today
-                        </button>
+                        </Link>
                     </div>
                 </div>
 

@@ -19,8 +19,19 @@ const Navbar = () => {
     return (
         <nav className="navbar">
             <div className="container navbar-content">
-                <Link to="/" className="flex items-center gap-2">
-                    <img src="/Logo_nda.png" alt="NextGen DON Academy" style={{ height: '50px', objectFit: 'contain' }} />
+                <Link to="/" className="flex items-center gap-2" style={{ padding: '10px 0' }}>
+                    <img
+                        src="/Logo_nda.png"
+                        alt="NextGen DON Academy"
+                        style={{
+                            height: '100px',
+                            objectFit: 'contain',
+                            filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15))',
+                            transition: 'transform 0.3s ease'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                    />
                 </Link>
 
                 <div className="hidden md:flex items-center gap-2 text-white text-sm font-medium absolute left-1/2 transform -translate-x-1/2">
@@ -33,8 +44,7 @@ const Navbar = () => {
                         <Link
                             key={link.path}
                             to={link.path}
-                            className={
-av-link }
+                            className={`nav-link ${isActive(link.path) ? 'active' : ''}`}
                         >
                             {link.title}
                         </Link>
@@ -56,7 +66,7 @@ av-link }
                         <Link
                             key={link.path}
                             to={link.path}
-                            className={mobile-nav-link }
+                            className={`mobile-nav-link ${isActive(link.path) ? 'active' : ''}`}
                             onClick={() => setIsOpen(false)}
                         >
                             {link.title}

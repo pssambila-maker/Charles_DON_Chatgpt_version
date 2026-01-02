@@ -1,7 +1,32 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const Footer = () => {
+    const [email, setEmail] = useState('');
+    const [subscribeStatus, setSubscribeStatus] = useState('');
+
+    const handleSubscribe = async (e) => {
+        e.preventDefault();
+        if (!email) return;
+
+        try {
+            await addDoc(collection(db, 'newsletter'), {
+                email,
+                subscribedAt: serverTimestamp()
+            });
+            setSubscribeStatus('success');
+            setEmail('');
+            setTimeout(() => setSubscribeStatus(''), 3000);
+        } catch (error) {
+            console.error('Error subscribing: ', error);
+            setSubscribeStatus('error');
+            setTimeout(() => setSubscribeStatus(''), 3000);
+        }
+    };
+
     return (
         <footer className="footer" style={{ background: '#c026d3', color: 'white', padding: '60px 0 20px' }}>
             <div className="container">
@@ -39,13 +64,60 @@ const Footer = () => {
                         <ul className="footer-links" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             <li style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <Phone size={18} />
-                                <span>+1 (407) 965-5152</span>
+                                <a href="tel:+12487959750" style={{ color: 'white' }}>+1 (248) 795-9750</a>
                             </li>
                             <li style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <Mail size={18} />
                                 <a href="mailto:info@nextgendonacademy.com" style={{ color: 'white' }}>info@nextgendonacademy.com</a>
                             </li>
                         </ul>
+                    </div>
+
+                    {/* Newsletter */}
+                    <div className="footer-col">
+                        <h4 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>Stay Updated</h4>
+                        <p style={{ fontSize: '0.9rem', marginBottom: '1rem', opacity: 0.9 }}>
+                            Get leadership insights and program updates
+                        </p>
+                        <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: '0.5rem' }}>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Your email"
+                                required
+                                style={{
+                                    flex: 1,
+                                    padding: '10px 12px',
+                                    borderRadius: '6px',
+                                    border: 'none',
+                                    background: 'rgba(255,255,255,0.2)',
+                                    color: 'white',
+                                    fontSize: '0.9rem'
+                                }}
+                            />
+                            <button
+                                type="submit"
+                                style={{
+                                    padding: '10px 20px',
+                                    borderRadius: '6px',
+                                    border: 'none',
+                                    background: 'white',
+                                    color: '#c026d3',
+                                    fontWeight: 'bold',
+                                    cursor: 'pointer',
+                                    fontSize: '0.9rem'
+                                }}
+                            >
+                                Subscribe
+                            </button>
+                        </form>
+                        {subscribeStatus === 'success' && (
+                            <p style={{ fontSize: '0.85rem', marginTop: '0.5rem', color: '#bbf7d0' }}>Thanks for subscribing!</p>
+                        )}
+                        {subscribeStatus === 'error' && (
+                            <p style={{ fontSize: '0.85rem', marginTop: '0.5rem', color: '#fecdd3' }}>Something went wrong. Try again.</p>
+                        )}
                     </div>
                 </div>
 

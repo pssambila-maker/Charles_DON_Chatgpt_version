@@ -17,7 +17,7 @@ const Hero = () => {
                         Advancing Leadership.<br />
                         Elevating Care.
                     </h1>
-                    <p style={{ fontSize: '1.1rem', color: 'rgba(255,255,255, 0.9)', marginBottom: '2.5rem', maxWidth: '500px' }}>
+                    <p style={{ fontSize: '1.3rem', color: 'rgba(255,255,255, 0.95)', marginBottom: '2.5rem', maxWidth: '520px', fontWeight: '500', lineHeight: '1.6' }}>
                         At NextGen DON Academy, we prepare current and aspiring Directors of Nursing (DONs) to lead with confidence, compassion and excellence - giving you the tools to succeed in today's evolving healthcare landscape.
                     </p>
                     <Link to="/enquiry" className="btn" style={{ background: '#f59e0b', color: 'white', padding: '14px 32px', fontSize: '1.1rem', borderRadius: '50px', border: 'none' }}>

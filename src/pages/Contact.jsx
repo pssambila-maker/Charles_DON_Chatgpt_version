@@ -1,16 +1,38 @@
 import { useState } from 'react';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const Contact = () => {
     const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
+    const [submitStatus, setSubmitStatus] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // No backend hook-up in this view; prevent default submit for now.
+        setIsSubmitting(true);
+        setSubmitStatus('');
+
+        try {
+            await addDoc(collection(db, 'enquiries'), {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                message: formData.message,
+                createdAt: serverTimestamp()
+            });
+            setSubmitStatus('success');
+            setFormData({ name: '', email: '', phone: '', message: '' });
+        } catch (error) {
+            console.error('Error submitting form: ', error);
+            setSubmitStatus('error');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -114,18 +136,30 @@ const Contact = () => {
                                 />
                                 <button
                                     type="submit"
+                                    disabled={isSubmitting}
                                     style={{
-                                        background: '#0ea5e9',
+                                        background: isSubmitting ? '#64748b' : '#0ea5e9',
                                         color: '#fff',
                                         border: 'none',
                                         padding: '10px 18px',
                                         borderRadius: '999px',
                                         fontWeight: 700,
-                                        width: 'fit-content'
+                                        width: 'fit-content',
+                                        cursor: isSubmitting ? 'not-allowed' : 'pointer'
                                     }}
                                 >
-                                    Send Message
+                                    {isSubmitting ? 'Sending...' : 'Send Message'}
                                 </button>
+                                {submitStatus === 'success' && (
+                                    <p style={{ color: '#10b981', fontSize: '0.95rem', marginTop: '0.5rem' }}>
+                                        Thank you! We'll be in touch within 24 hours.
+                                    </p>
+                                )}
+                                {submitStatus === 'error' && (
+                                    <p style={{ color: '#ef4444', fontSize: '0.95rem', marginTop: '0.5rem' }}>
+                                        Something went wrong. Please try again or call us at <a href="tel:+12487959750" style={{ color: '#0ea5e9' }}>+1 (248) 795-9750</a>
+                                    </p>
+                                )}
                             </form>
                         </div>
 
@@ -141,7 +175,9 @@ const Contact = () => {
                                     <div style={{ background: '#0f172a', padding: '10px', borderRadius: '50%' }}>
                                         <Phone color="#0ea5e9" />
                                     </div>
-                                    <span style={{ fontWeight: 700, color: '#f8fafc' }}>+1(248)795-9750</span>
+                                    <a href="tel:+12487959750" style={{ fontWeight: 700, color: '#f8fafc', textDecoration: 'none' }}>
+                                        +1 (248) 795-9750
+                                    </a>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                     <div style={{ background: '#0f172a', padding: '10px', borderRadius: '50%' }}>

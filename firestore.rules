@@ -1,0 +1,34 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Enquiries collection - allow anyone to create submissions
+    match /enquiries/{enquiryId} {
+      // Allow anyone to create new enquiries (form submissions with phone instead of subject)
+      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'phone', 'message', 'createdAt'])
+                    && request.resource.data.name is string
+                    && request.resource.data.email is string
+                    && request.resource.data.phone is string
+                    && request.resource.data.message is string;
+
+      // Only authenticated users can read enquiries
+      // You can modify this later when you add authentication
+      allow read: if false; // Change to 'if request.auth != null' when you add admin auth
+    }
+
+    // Newsletter collection - allow anyone to subscribe
+    match /newsletter/{subscriberId} {
+      // Allow anyone to subscribe
+      allow create: if request.resource.data.keys().hasAll(['email', 'subscribedAt'])
+                    && request.resource.data.email is string;
+
+      // Only authenticated users can read newsletter subscriptions
+      allow read: if false; // Change to 'if request.auth != null' when you add admin auth
+    }
+
+    // Deny all other requests by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
