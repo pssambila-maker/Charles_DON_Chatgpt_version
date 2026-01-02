@@ -3,6 +3,7 @@ import UrgencyBanner from './components/UrgencyBanner';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import StickyApplyButton from './components/StickyApplyButton';
+import ChatWidget from './components/ChatWidget';
 import Home from './pages/Home';
 import About from './pages/About';
 import Program from './pages/Program';
@@ -31,6 +32,7 @@ function AppContent() {
       </main>
       <Footer />
       {showApplyButton && <StickyApplyButton />}
+      <ChatWidget />
     </div>
   );
 }

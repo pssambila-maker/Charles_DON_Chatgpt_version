@@ -1,6 +1,8 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const sgMail = require('@sendgrid/mail');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { SYSTEM_INSTRUCTIONS } = require('./academyKnowledge');
 
 admin.initializeApp();
 
@@ -274,3 +276,268 @@ exports.onNewsletterSubscribe = functions.firestore
             return { success: false, error: error.message };
         }
     });
+
+/**
+ * Chat with Sarah - AI Admissions Assistant
+ * Uses Google Gemini API for conversational AI
+ */
+exports.chatWithSarah = functions.https.onCall(async (data, context) => {
+    const { message, conversationHistory } = data;
+
+    console.log('Chat request received:', { message, historyLength: conversationHistory?.length || 0 });
+
+    // Validate input
+    if (!message || typeof message !== 'string') {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Message is required and must be a string'
+        );
+    }
+
+    try {
+        // Get Gemini API key from environment config
+        // Set it with: firebase functions:config:set gemini.key="YOUR_GEMINI_API_KEY"
+        const GEMINI_API_KEY = functions.config().gemini?.key;
+
+        if (!GEMINI_API_KEY) {
+            console.error('Gemini API key not configured');
+            throw new functions.https.HttpsError(
+                'failed-precondition',
+                'AI service is not configured. Please contact support.'
+            );
+        }
+
+        // Initialize Google Generative AI
+        const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+
+        // Build conversation history for context
+        const chatHistory = [];
+
+        // Add system instructions as first message
+        chatHistory.push({
+            role: 'user',
+            parts: [{ text: SYSTEM_INSTRUCTIONS }]
+        });
+        chatHistory.push({
+            role: 'model',
+            parts: [{ text: 'Understood. I am Sarah, the Senior Admissions Advisor for NextGen DON Academy. I\'m here to help you learn about our Director of Nursing leadership programs and answer any questions you may have. How can I assist you today?' }]
+        });
+
+        // Add previous conversation if provided
+        if (conversationHistory && Array.isArray(conversationHistory)) {
+            conversationHistory.forEach(msg => {
+                chatHistory.push({
+                    role: msg.role === 'user' ? 'user' : 'model',
+                    parts: [{ text: msg.content }]
+                });
+            });
+        }
+
+        // Start chat with history
+        const chat = model.startChat({
+            history: chatHistory,
+            generationConfig: {
+                maxOutputTokens: 500,
+                temperature: 0.7,
+            },
+        });
+
+        // Send user message and get response
+        const result = await chat.sendMessage(message);
+        const response = await result.response;
+        const responseText = response.text();
+
+        console.log('AI response generated successfully');
+
+        // Detect if user wants to book an appointment
+        const appointmentKeywords = [
+            'book', 'schedule', 'appointment', 'consultation',
+            'meeting', 'call', 'talk to someone', 'speak with'
+        ];
+        const wantsAppointment = appointmentKeywords.some(keyword =>
+            message.toLowerCase().includes(keyword) ||
+            responseText.toLowerCase().includes(keyword)
+        );
+
+        // Save conversation to Firestore for analytics
+        try {
+            await admin.firestore().collection('chatLogs').add({
+                userMessage: message,
+                aiResponse: responseText,
+                wantsAppointment,
+                timestamp: admin.firestore.FieldValue.serverTimestamp(),
+                conversationLength: (conversationHistory?.length || 0) + 1
+            });
+        } catch (logError) {
+            console.error('Error logging conversation:', logError);
+            // Don't fail the function if logging fails
+        }
+
+        return {
+            response: responseText,
+            wantsAppointment,
+            timestamp: new Date().toISOString()
+        };
+
+    } catch (error) {
+        console.error('Error in chatWithSarah:', error);
+
+        // Return user-friendly error
+        if (error.code?.includes('quota')) {
+            throw new functions.https.HttpsError(
+                'resource-exhausted',
+                'AI service is temporarily busy. Please try again in a moment.'
+            );
+        }
+
+        throw new functions.https.HttpsError(
+            'internal',
+            'Sorry, I\'m having trouble responding right now. Please try again or call us at (248) 795-9750.'
+        );
+    }
+});
+
+/**
+ * Book an appointment through the chat interface
+ * Saves to Firestore and sends email notifications
+ */
+exports.bookAppointment = functions.https.onCall(async (data, context) => {
+    const { name, email, phone, preferredDate, preferredTime, notes } = data;
+
+    console.log('Appointment booking request:', { name, email, phone });
+
+    // Validate required fields
+    if (!name || !email || !phone) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Name, email, and phone are required'
+        );
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Invalid email address'
+        );
+    }
+
+    try {
+        // Save appointment to Firestore
+        const appointmentRef = await admin.firestore().collection('appointments').add({
+            name,
+            email,
+            phone,
+            preferredDate: preferredDate || 'Not specified',
+            preferredTime: preferredTime || 'Not specified',
+            notes: notes || '',
+            source: 'chat_widget',
+            status: 'pending',
+            createdAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        console.log('Appointment saved to Firestore:', appointmentRef.id);
+
+        // Send confirmation emails
+        if (SENDGRID_API_KEY) {
+            try {
+                // Email to user
+                const userEmail = {
+                    to: email,
+                    from: FROM_EMAIL,
+                    subject: 'Appointment Request Confirmed - NextGen DON Academy',
+                    html: `
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <style>
+                                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                                .header { background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+                                .content { background: #f8fafc; padding: 30px; border-radius: 0 0 8px 8px; }
+                                .footer { text-align: center; margin-top: 20px; color: #64748b; font-size: 14px; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="container">
+                                <div class="header">
+                                    <h1 style="margin: 0;">Appointment Request Received!</h1>
+                                    <p style="margin: 10px 0 0 0;">NextGen DON Academy</p>
+                                </div>
+                                <div class="content">
+                                    <p>Dear ${name},</p>
+                                    <p>Thank you for requesting a consultation with NextGen DON Academy!</p>
+                                    <p><strong>Your appointment details:</strong></p>
+                                    <ul style="background: white; padding: 20px; border-radius: 8px;">
+                                        <li><strong>Name:</strong> ${name}</li>
+                                        <li><strong>Phone:</strong> ${phone}</li>
+                                        <li><strong>Preferred Date:</strong> ${preferredDate || 'To be scheduled'}</li>
+                                        <li><strong>Preferred Time:</strong> ${preferredTime || 'To be scheduled'}</li>
+                                    </ul>
+                                    <p>Our team will contact you within <strong>24 hours</strong> to confirm your appointment time.</p>
+                                    <p>If you have any immediate questions, call us at <strong>(248) 795-9750</strong>.</p>
+                                    <p>Best regards,<br><strong>Sarah & The NextGen DON Academy Team</strong></p>
+                                </div>
+                                <div class="footer">
+                                    <p>995 N. Pontiac Trail, Walled Lake, MI 48390</p>
+                                    <p>Phone: +1 (248) 795-9750 | Email: info@nextgendonacademy.com</p>
+                                </div>
+                            </div>
+                        </body>
+                        </html>
+                    `
+                };
+
+                // Email to admin
+                const adminEmail = {
+                    to: ADMIN_EMAIL,
+                    from: FROM_EMAIL,
+                    subject: `📅 New Appointment Request from ${name}`,
+                    html: `
+                        <!DOCTYPE html>
+                        <html>
+                        <body>
+                            <h2>📅 New Appointment Request (via Chat Widget)</h2>
+                            <div style="background: #f8fafc; padding: 20px; border-radius: 8px;">
+                                <p><strong>Name:</strong> ${name}</p>
+                                <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+                                <p><strong>Phone:</strong> <a href="tel:${phone}">${phone}</a></p>
+                                <p><strong>Preferred Date:</strong> ${preferredDate || 'Not specified'}</p>
+                                <p><strong>Preferred Time:</strong> ${preferredTime || 'Not specified'}</p>
+                                <p><strong>Notes:</strong> ${notes || 'None'}</p>
+                                <p><strong>Appointment ID:</strong> ${appointmentRef.id}</p>
+                            </div>
+                            <p>⏰ <strong>Action Required:</strong> Contact ${name} within 24 hours to confirm appointment.</p>
+                        </body>
+                        </html>
+                    `
+                };
+
+                await sgMail.send(userEmail);
+                console.log('Confirmation email sent to user');
+
+                await sgMail.send(adminEmail);
+                console.log('Notification email sent to admin');
+
+            } catch (emailError) {
+                console.error('Error sending appointment emails:', emailError);
+                // Don't fail the function if email fails
+            }
+        }
+
+        return {
+            success: true,
+            appointmentId: appointmentRef.id,
+            message: 'Appointment request received! We\'ll contact you within 24 hours to confirm.'
+        };
+
+    } catch (error) {
+        console.error('Error booking appointment:', error);
+        throw new functions.https.HttpsError(
+            'internal',
+            'Failed to book appointment. Please try again or call us at (248) 795-9750.'
+        );
+    }
+});
